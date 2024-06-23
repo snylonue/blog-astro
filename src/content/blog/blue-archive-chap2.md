@@ -8,6 +8,7 @@ draft: false
 tags:
   - game
   - blue archive
+  - review
 ogImage: ""
 description: something about blue archive
 ---
