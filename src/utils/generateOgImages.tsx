@@ -4,6 +4,22 @@ import { type CollectionEntry } from "astro:content";
 import postOgImage from "./og-templates/post";
 import siteOgImage from "./og-templates/site";
 
+const getTtfFont = async (family: string, axes: string[], value: number[]): Promise<ArrayBuffer> => {
+  const familyParam = axes.join(',') + '@' + value.join(',');
+
+  // Get css style sheet with user agent Mozilla/5.0 Firefox/1.0 to ensure non-variable TTF is returned
+  const cssCall = await fetch(`https://fonts.googleapis.com/css2?family=${family}:${familyParam}&display=swap`, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 Firefox/1.0',
+    },
+  });
+
+  const css = await cssCall.text();
+  const ttfUrl = css.match(/url\(([^)]+)\)/)?.[1];
+
+  return await fetch(ttfUrl!).then(res => res.arrayBuffer());
+}
+
 const fetchFonts = async () => {
   // Regular Font
   const fontFileRegular = await fetch(
@@ -17,10 +33,12 @@ const fetchFonts = async () => {
   );
   const fontBold: ArrayBuffer = await fontFileBold.arrayBuffer();
 
-  return { fontRegular, fontBold };
+  const fontNotoSansSc = await getTtfFont("Noto Sans SC", ["wght"], [400]);
+
+  return { fontRegular, fontBold, fontNotoSansSc };
 };
 
-const { fontRegular, fontBold } = await fetchFonts();
+const { fontRegular, fontBold, fontNotoSansSc } = await fetchFonts();
 
 const options: SatoriOptions = {
   width: 1200,
@@ -39,6 +57,12 @@ const options: SatoriOptions = {
       weight: 600,
       style: "normal",
     },
+    {
+      name: "font noto sc",
+      data: fontNotoSansSc,
+      weight: 400,
+      style: "normal",
+    }
   ],
 };
 
