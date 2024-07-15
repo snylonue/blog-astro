@@ -4,7 +4,7 @@ author: snylonue
 pubDatetime: 2024-07-10T22:00:00+08:00
 slug: database-animals
 featured: true
-draft: false
+draft: true
 tags:
   - critical
 ogImage: ""
